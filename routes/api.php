@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('register',[Authcontroller::class,'register']);
 Route::get('register',[Authcontroller::class,'register']);
+Route::put('register',[Authcontroller::class,'register']);
 Route::post('login',[Authcontroller::class,'login']);
 Route::get('login',[Authcontroller::class,'login']);
 Route::resource('albums', AlbumController::class);

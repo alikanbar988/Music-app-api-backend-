@@ -30,24 +30,25 @@ class Authcontroller extends Controller
     }
     public function register(Request $request)
     {
-        $user=user::where('email',$request->email)->first();
-        if($user)
-        {
-            $user = new User();
-            $user->name=$request->name;
-            $user->email=$request->email;
-            $user->password=bcrypt($request->password);
-          
-            $user->save();
-
-            $token=$user->createToken('AuthToken')->plainTextToken;
-        
-            return response()->json([
-                    'status'=>true,
-                    'message'=>'User created Successfully',
-                    'token'=>$token
-                ]
-            );
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+         $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            ]);
+    
+         $access_token = $user->createToken('authToken')->plainTextToken;
+         if($user){
+         return response()->json([
+             'status'=>'success',
+             'message'=>'User has been registered!',
+             'token'=> $access_token
+             ], 201);
+    
             
         }else{
             return response()->json([
@@ -56,6 +57,18 @@ class Authcontroller extends Controller
             ]
             );
         }
+    }
+    public function update( $request ,string $id)
+    {
+        $user=user::findOrfails($id);
+        $user->update($request->all());
+            return response()->json([
+                "status"=>"Success",
+                "Message"=>"Profile Updated Success"
+            ],201);
+        
+        
+
     }
 
 }
